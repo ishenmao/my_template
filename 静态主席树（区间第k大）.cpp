@@ -1,24 +1,24 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// ¾²Ì¬Ö÷Ï¯Ê÷£¬²éÑ¯Çø¼äµÚ k Ğ¡
-// Ô­Êı¾İĞèÒªÌáÇ°ÀëÉ¢»¯
+// é™æ€ä¸»å¸­æ ‘ï¼ŒæŸ¥è¯¢åŒºé—´ç¬¬ k å°
+// åŸæ•°æ®éœ€è¦æå‰ç¦»æ•£åŒ–
 namespace kth_tree {
     const int maxn = 100005;
     struct node {
         int lson, rson, par;
         int sum;
-    } tree[1800000]; // ½ÚµãÊıÁ¿´óÔ¼Îª n * (log2(n) + 2)
-    int root[maxn]; // Ã¿¿ÅÏß¶ÎÊ÷rootÖ¸Õë, ÕâÀïÖ¸¶¨ÁË½¨n¿ÃÊ÷
-    int L; // ĞÂ½ÚµãµØÖ·
-    int n; // Î¬»¤µÄĞòÁĞ³¤¶È
-    // Ä£ÄâÉêÇëÄÚ´æ£¬pÊÇĞÂ½ÚµãµÄ¸¸Ç×
+    } tree[1800000]; // èŠ‚ç‚¹æ•°é‡å¤§çº¦ä¸º n * (log2(n) + 2)
+    int root[maxn]; // æ¯é¢—çº¿æ®µæ ‘rootæŒ‡é’ˆ, è¿™é‡ŒæŒ‡å®šäº†å»ºnæ£µæ ‘
+    int L; // æ–°èŠ‚ç‚¹åœ°å€
+    int n; // ç»´æŠ¤çš„åºåˆ—é•¿åº¦
+    // æ¨¡æ‹Ÿç”³è¯·å†…å­˜ï¼Œpæ˜¯æ–°èŠ‚ç‚¹çš„çˆ¶äº²
     inline int newnode(int p) {
         memset(tree + L, 0, sizeof(node));
         tree[L].par = p;
         return L++;
     }
-    // ´´½¨¿ÕÊ÷
+    // åˆ›å»ºç©ºæ ‘
     void build(int id, int l, int r) {
         if(l == r)
             return;
@@ -28,7 +28,7 @@ namespace kth_tree {
         build(tree[id].lson, l, mid);
         build(tree[id].rson, mid + 1, r);
     }
-    // µ¥µã¸üĞÂ, ·µ»ØĞÂ½ÚµãµØÖ·
+    // å•ç‚¹æ›´æ–°, è¿”å›æ–°èŠ‚ç‚¹åœ°å€
     int update(int id, int new_par, int l, int r, int x) {
         if(l == r) {
             int new_leaf = newnode(new_par);
@@ -50,14 +50,14 @@ namespace kth_tree {
         tree[new_self].sum = tree[new_ls].sum + tree[new_rs].sum;
         return new_self;
     }
-    // ³õÊ¼»¯, ´«ÈëĞòÁĞ Ê×Î²µØÖ·£¬±ØĞëÌáÇ°ÀëÉ¢»¯
+    // åˆå§‹åŒ–, ä¼ å…¥åºåˆ— é¦–å°¾åœ°å€ï¼Œå¿…é¡»æå‰ç¦»æ•£åŒ–
     void init(int* begin, int* end) {
         L = 0;
         n = end - begin;
         root[0] = newnode(-1);
-        // ½¨Ò»¿Ã¿ÕÊ÷
+        // å»ºä¸€æ£µç©ºæ ‘
         build(root[0], 1, n);
-        // ÖğÒ»¸üĞÂÊıµÄÈ¨Öµ£¬ÏàÓ¦Î»ÖÃ¼Ó1
+        // é€ä¸€æ›´æ–°æ•°çš„æƒå€¼ï¼Œç›¸åº”ä½ç½®åŠ 1
         for(int i = 1; i <= n; i++) {
             root[i] = update(root[i - 1], -1, 1, n, begin[i - 1]);
         }
@@ -72,19 +72,16 @@ namespace kth_tree {
             return base_query(tree[lid].lson, tree[rid].lson, l, mid, k);
         return base_query(tree[lid].rson, tree[rid].rson, mid + 1, r, k - lson_cnt);
     }
-    // »Ø´ğÖ¸¶¨Çø¼ä µÚ k Ğ¡£¬×îĞ¡ÖµÎªµÚ1Ğ¡
+    // å›ç­”æŒ‡å®šåŒºé—´ ç¬¬ k å°ï¼Œæœ€å°å€¼ä¸ºç¬¬1å°
     int query(int l, int r, int k) {
         base_query(root[l - 1], root[r], 1, n, k);
     }
 }
-// ²âÊÔ
+// æµ‹è¯•
 int main() {
     int n = 10;
     int a[] = {1, 3, 3, 5, 2, 7, 7, 1, 4, 6};
-    for(int i = 1; i <= n; i++) {
-        arr[i] = a[i - 1];
-    }
-    kth_tree::init(n);
+    kth_tree::init(a, a + n);
     int l, r, k;
     while(cin >> l >> r >> k) {
         int res = kth_tree::query(l, r, k);
