@@ -1,21 +1,25 @@
 #include <bits/stdc++.h>
 using namespace std;
-// ������Ӵ����������㷨
-// ���Ӷ� ����
+// 最长回文子串，马拉车算法
+// 复杂度 线性
 namespace manacher {
-    const int maxn = 200005; // ��ѯ�����ȵ�2����
-    char ma[maxn] = {}; //���˼��������ַ��������� 0 ���
-    int mp[maxn]; // ma �Ļ��İ뾶, mp[0] = mp[1] = 1������Ҳ���ڰ뾶����
-    int n, maxlen; // n: ���䴮 ma �ĳ���, maxlen: ԭ���������Ӵ�����
-    // ��ʼ�������� �ַ��� s
+    const int maxn = 200005; // 查询串长度的2倍多
+    char ma[maxn] = {}; //加了间隔符后的字符串，就用 0 填充
+    int mp[maxn]; // ma 的回文半径, mp[0] = mp[1] = 1，中心也算在半径里面
+    int n, maxlen; // n: 扩充串 ma 的长度, maxlen: 原串最大回文子串长度
+    // 初始化，传入 字符串 s
     inline void init(const char* s, int len) {
-        n = 2, maxlen = -1; // ma ���ĳ��ȣ���ʱ���±���
+        n = 2, maxlen = -1; // ma 串的长度，临时当下标用
         for(int i = 0; i < len; i++, n += 2)
             ma[n] = s[i];
-        ma[0] = '#', ma[n] = '$'; // ��β���ɲ�һ���ַ���'$'������
-        // ������İ뾶
-        int id = 0, mx = 0; // id: Ŀǰ��Զ���Ĵ����ģ�mx = id + mp[id]���� ��idΪ���ĵĻ��Ĵ����Ҳ��ܵ���λ��
-        for(int i = 0; i < n; i++) {
+        //此时 n == 2*len + 2
+        //但实际需要 2*len + 3 的空间
+        //末尾放置 '$'， 方便下面 while 退出循环。
+        ma[0] = '#', ma[n] = '$'; // 首尾补成不一样字符，'$'不计算
+        // 计算回文半径
+        int id = 0, mx = 1; // id: 目前最远回文串中心，mx = id + mp[id]，即 以id为中心的回文串最右不能到达位置
+        mp[0] = 1;
+        for(int i = 1; i < n; i++) {
             mp[i] = mx > i ? min(mp[2 * id - i], mx - i) : 1;
             int l = i - mp[i], r = i + mp[i];
             while(ma[l--] == ma[r++])
@@ -25,7 +29,7 @@ namespace manacher {
             maxlen = max(maxlen, mp[i] - 1);
         }
     }
-    // �ش�������Ӵ�����ԭ������ʼ�±�, �������Ҫ��ķ��ص�һ��
+    // 回答最长回文子串，在原串中起始下标, 多个符合要求的返回第一个
     int query_index() {
         int id = 2;
         while(mp[id] != maxlen + 1)
@@ -33,7 +37,7 @@ namespace manacher {
         return (id - mp[id]) >> 1;
     }
 }
-// ����
+// 测试
 int main() {
     char buf[1000];
     while(cin >> buf) {
