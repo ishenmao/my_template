@@ -9,7 +9,8 @@ namespace manacher {
     int n, maxlen; // n: 扩充串 ma 的长度, maxlen: 原串最大回文子串长度
     // 初始化，传入 字符串 s
     inline void init(const char* s, int len) {
-        n = 2, maxlen = -1; // ma 串的长度，临时当下标用
+        maxlen = 1;
+        n = 2; // ma 串的长度，临时当下标用
         for(int i = 0; i < len; i++, n += 2)
             ma[n] = s[i];
         //此时 n == 2*len + 2
